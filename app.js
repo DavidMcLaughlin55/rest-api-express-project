@@ -1,33 +1,46 @@
 'use strict';
 
-// load modules
+// Modules
 const express = require('express');
 const morgan = require('morgan');
+const { sequelize } = require('./models').sequelize;
 
-// variable to enable global error logging
+// Routing
+const usersRoute = require('./routes/userRoutes');
+const coursesRoute = require('./routes/courseRoutes');
+
+// Variable to enable global error logging
 const enableGlobalErrorLogging = process.env.ENABLE_GLOBAL_ERROR_LOGGING === 'true';
 
-// create the Express app
 const app = express();
 
-// setup morgan which gives us http request logging
+// Setup morgan which gives us http request logging
 app.use(morgan('dev'));
 
-// setup a friendly greeting for the root route
-app.get('/', (req, res) => {
-  res.json({
-    message: 'Welcome to the REST API project!',
-  });
-});
+(async () => {
+  try {
+    // Test the connection to the database
+    console.log('Connection to the database successful!');
+    await sequelize.authenticate();
+    // Sync the models
+    console.log('Synchronizing the models with the database...');
+    await sequelize.sync({ force: true });
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+  }
+})
 
-// send 404 if no other route matched
+app.use('/api', usersRoute);
+app.use('/api', coursesRoute);
+
+// 404 Error Handler
 app.use((req, res) => {
   res.status(404).json({
     message: 'Route Not Found',
   });
 });
 
-// setup a global error handler
+// Global Error Handler
 app.use((err, req, res, next) => {
   if (enableGlobalErrorLogging) {
     console.error(`Global error handler: ${JSON.stringify(err.stack)}`);
@@ -39,10 +52,8 @@ app.use((err, req, res, next) => {
   });
 });
 
-// set our port
 app.set('port', process.env.PORT || 5000);
 
-// start listening on our port
 const server = app.listen(app.get('port'), () => {
   console.log(`Express server is listening on port ${server.address().port}`);
 });

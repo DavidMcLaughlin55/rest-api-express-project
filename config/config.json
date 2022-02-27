@@ -1,0 +1,14 @@
+{
+  "development": {
+    "storage": "td-restapi.db",
+    "dialect": "sqlite"
+  },
+  "test": {
+    "storage": "td-restapi.db",
+    "dialect": "sqlite"
+  },
+  "production": {
+    "storage": "td-restapi.db",
+    "dialect": "sqlite"
+  }
+}

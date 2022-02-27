@@ -10,15 +10,16 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "nodemon": "^1.18.3"
-  },
+  "devDependencies": {},
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cross-env": "^7.0.2",
     "express": "^4.17.1",
     "morgan": "^1.10.0",
+    "nodemon": "^2.0.15",
     "promise.prototype.finally": "^3.1.2",
-    "sqlite3": "^5.0.0"
+    "sequelize": "^6.17.0",
+    "sequelize-cli": "^6.4.1",
+    "sqlite3": "^5.0.2"
   }
 }
