@@ -1,3 +1,5 @@
+'use strict';
+//Imports
 const express = require('express');
 const { asyncHandler } = require('../middleware/async-handler');
 const Course = require('../models').Course;
@@ -17,20 +19,55 @@ router.get('/courses/:id', asyncHandler(async (req, res) => {
 
 // POSTs new course to courses. HTTP Status 201.
 router.post('/courses', asyncHandler(async (req, res) => {
-    const newCourse = await Course.create(req.body);
-    res.status(201).json({ message: 'New course has been created!' });
+    const course = req.body;
+
+    const courseErrors = [];
+
+    if (!course.title) {
+        courseErrors.push('Please provide a course title.');
+    };
+
+    if (!course.description) {
+        courseErrors.push('Please provide a course description.');
+    }
+
+    if (courseErrors.length > 0) {
+        res.status(400).json(courseErrors);
+    } else {
+        const newCourse = await Course.create(course);
+        res.status(201).end();
+    };
 }))
 
 // PUTs course update for corresponding ID. HTTP Status 204.
 router.put('/courses/:id', asyncHandler(async (req, res) => {
-    const course = await Course.findByPk(req.params.id);
-    res.status(204).json({ message: 'Course details updated!' })
+    let updatedCourse = req.body;
+
+    updatedCourseErrors = [];
+
+    if (!updatedCourse.title) {
+        updatedCourseErrors.push('Please provide a course title.');
+    };
+
+    if (!updatedCourse.description) {
+        updatedCourseErrors.push('Please provide a course description.');
+    };
+
+    if (updatedCourseErrors.length > 0) {
+        res.status(400).json(updatedCourseErrors);
+    } else {
+        const course = await Course.findByPk(req.params.id);
+        if (course) {
+            course.update(updatedCourse);
+        };
+        res.status(204).end();
+    };
 }))
 
 //DELETEs ID's corresponding course. HTTP Status 204.
 router.delete('/courses/:id', asyncHandler(async (req, res) => {
     const course = await Course.findByPk(req.params.id);
-    res.status(204).json({ message: 'Course has been deleted' });
+    res.status(204).end();
 }))
 
 module.exports = router;

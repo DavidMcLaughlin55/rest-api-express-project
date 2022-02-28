@@ -1,4 +1,7 @@
+'use strict';
+//Imports
 const express = require('express');
+const bcrypt = require('bcrypt');
 const { asyncHandler } = require('../middleware/async-handler');
 const User = require('../models').User;
 const router = express.Router();
@@ -11,8 +14,35 @@ router.get('/users', asyncHandler(async (req, res) => {
 
 // POSTs newly created user to users. HTTP Status 201.
 router.post('/users', asyncHandler(async (req, res) => {
-    const newUser = await User.create(req.body);
-    res.status(201).json({ message: 'New user has been created!' });
+    const user = req.body;
+
+    // User Validation
+    const userErrors = [];
+
+    if (!user.firstName) {
+        userErrors.push('Please provide a first name.');
+    };
+
+    if (!user.lastName) {
+        userErrors.push('Please provide a last name.');
+    };
+
+    if (!user.emailAddress) {
+        userErrors.push('Please provide a valid email address');
+    };
+
+    if (!user.password) {
+        userErrors.push('A password is required. Please provide a unique password');
+    } else if (user.password.length < 10 || user.password.length > 20) {
+        userErrors.push('Your password should be between 10 and 20 characters in length.');
+    };
+
+    if (userErrors.length > 0) {
+        res.status(400).json({ userErrors })
+    } else {
+        const newUser = await User.create(user);
+        res.status(201).end();
+    }
 }))
 
 module.exports = router;
