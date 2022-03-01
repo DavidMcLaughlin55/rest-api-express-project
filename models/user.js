@@ -1,4 +1,5 @@
 'use strict';
+const bcrypt = require('bcryptjs');
 const {
   Model
 } = require('sequelize');
@@ -63,8 +64,14 @@ module.exports = (sequelize, DataTypes) => {
           msg: 'Please provide a password.',
         },
         len: {
-          args: [10, 20],
-          message: 'The password should be between 10 and 20 characters in length.',
+          args: [8, 20],
+          message: 'The password should be between 8 and 20 characters in length.',
+        },
+        set(password) {
+          if (password) {
+            const passwordHash = bcrypt.hashSync(password, 10);
+            this.setDataValue('password', passwordHash);
+          }
         },
       },
     },

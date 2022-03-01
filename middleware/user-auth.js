@@ -2,21 +2,22 @@
 
 const basicAuth = require('basic-auth');
 const bcrypt = require('bcryptjs');
-const { User } = require('../models/user');
+const { User } = require('../models');
 
 // authenticateUser is middleware used to authenticate the user request.
 exports.authenticateUser = async (req, res, next) => {
     let message;
 
-    const userCredentials = auth(req); // Parses user request credentials.
+    const userCredentials = basicAuth(req); // Parses user request credentials.
 
     if (userCredentials) {
-        const user = await User.findOne({ where: { firstName: userCredentials.firstName } && { lastName: userCredentials.lastName } });
+        console.log(userCredentials);
+        const user = await User.findOne({ where: { emailAddress: userCredentials.name } });
         if (user) {
-            const authenticated = bcrypt.compareSync(userCredentials.password, user.password); // Compares user request password with stored user password.
+            const authenticated = bcrypt.compareSync(userCredentials.pass, user.password); // Compares user request password with stored user password.
             if (authenticated) {
                 console.log(`User "${user.firstName} ${user.lastName}" has been authenticated.`);
-                userCredentials = user;
+                req.userCredentials = user;
             } else {
                 message = `${user.firstName} ${user.lastName} could not be authenticated.`;
             }

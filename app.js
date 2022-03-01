@@ -16,6 +16,8 @@ const app = express();
 
 // Setup morgan which gives us http request logging
 app.use(morgan('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 (async () => {
   try {
