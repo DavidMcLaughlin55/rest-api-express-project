@@ -3,7 +3,7 @@
 // Modules
 const express = require('express');
 const morgan = require('morgan');
-const { sequelize } = require('./models').sequelize;
+const { sequelize } = require('./models');
 const usersRoute = require('./routes/userRoutes');
 const coursesRoute = require('./routes/courseRoutes');
 
@@ -17,21 +17,12 @@ app.use(morgan('dev')); //Gives HTTP request logging
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-(async () => {
-  // From Sequelize documentation
-  try {
-    // Test the connection to the database
-    console.log('Connection to the database successful!');
-    await sequelize.authenticate();
-    // Sync the models
-    console.log('Synchronizing the models with the database...');
-    await sequelize.sync({ force: true });
-  } catch (error) {
-    console.error('Unable to connect to the database:', error);
-  }
-})
-
 // Routing
+app.get('/', (req, res) => {
+  res.json({
+    message: 'REST API & Sequelize project',
+  });
+});
 app.use('/api', usersRoute);
 app.use('/api', coursesRoute);
 
@@ -55,6 +46,21 @@ app.use((err, req, res, next) => {
 });
 
 app.set('port', process.env.PORT || 5000);
+
+// Test for database connection.
+(async () => {
+  // From Sequelize documentation
+  try {
+    // Test the connection to the database
+    await sequelize.authenticate();
+    console.log('Connection to the database successful!');
+    // Sync the models
+    await sequelize.sync();
+    console.log('Synchronizing the models with the database...');
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+  }
+})();
 
 const server = app.listen(app.get('port'), () => {
   console.log(`Express server is listening on port ${server.address().port}`);

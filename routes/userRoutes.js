@@ -9,9 +9,9 @@ const router = express.Router();
 
 // GETs all properties and values for the authenticated user. HTTP Status 200.
 router.get('/users', authenticateUser, asyncHandler(async (req, res, next) => {
-    const users = await User.findAll();
-    if (users) {
-        res.status(200).json(users);
+    const user = req.userCredentials;
+    if (user) {
+        res.status(200).json(user);
     } else {
         next();
     }
