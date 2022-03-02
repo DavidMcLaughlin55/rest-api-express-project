@@ -67,6 +67,7 @@ module.exports = (sequelize, DataTypes) => {
           args: [8, 20],
           message: 'The password should be between 8 and 20 characters in length.',
         },
+        // Encrypt Password
         set(password) {
           if (password) {
             const passwordHash = bcrypt.hashSync(password, 10);

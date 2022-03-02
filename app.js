@@ -4,8 +4,6 @@
 const express = require('express');
 const morgan = require('morgan');
 const { sequelize } = require('./models').sequelize;
-
-// Routing
 const usersRoute = require('./routes/userRoutes');
 const coursesRoute = require('./routes/courseRoutes');
 
@@ -14,12 +12,13 @@ const enableGlobalErrorLogging = process.env.ENABLE_GLOBAL_ERROR_LOGGING === 'tr
 
 const app = express();
 
-// Setup morgan which gives us http request logging
-app.use(morgan('dev'));
+// Setup 
+app.use(morgan('dev')); //Gives HTTP request logging
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 (async () => {
+  // From Sequelize documentation
   try {
     // Test the connection to the database
     console.log('Connection to the database successful!');
@@ -32,6 +31,7 @@ app.use(express.urlencoded({ extended: false }));
   }
 })
 
+// Routing
 app.use('/api', usersRoute);
 app.use('/api', coursesRoute);
 
